@@ -41,7 +41,7 @@ simpleboost_msg_status(
 	"Boost version file: ${SIMPLEBOOST_BOOST_VER_CMAKE_FILE_PATH}"
 )
 
-include(${SIMPLEBOOST_BOOST_VER_CMAKE_FILE_PATH})
+simpleboost_include_ver_file(${SIMPLEBOOST_BOOST_VER_CMAKE_FILE_PATH})
 include(${SIMPLEBOOST_SCRIPTS_HOME}/sub_lib_meta.cmake)
 
 if(${SIMPLEBOOST_TEST})

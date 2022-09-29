@@ -22,6 +22,15 @@ FUNCTION(simpleboost_msg_err msg)
 ENDFUNCTION()
 
 
+FUNCTION(simpleboost_include_ver_file ver_file)
+	if(EXISTS ${ver_file})
+		include(${ver_file})
+	else()
+		simpleboost_msg_err("Version file ${ver_file} not found!")
+	endif()
+ENDFUNCTION()
+
+
 FUNCTION(simpleboost_add_sublib)
 	# if (${ARGC} LESS 31)
 	# 	message(
