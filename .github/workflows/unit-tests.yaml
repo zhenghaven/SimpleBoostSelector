@@ -34,7 +34,7 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         -DSIMPLEBOOST_TEST=ON
         -DSIMPLEBOOST_TEST_CXX_STANDARD=${{ matrix.std }}
-        -DSIMPLEBOOST_BOOST_VER="1.79.0"
+        -DSIMPLEBOOST_BOOST_VER="1.80.0"
 
 
     - name: Build
