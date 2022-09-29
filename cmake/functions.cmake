@@ -24,7 +24,9 @@ ENDFUNCTION()
 
 FUNCTION(simpleboost_add_sublib)
 	# if (${ARGC} LESS 31)
-	# 	message(FATAL "Not enough arguments passed to simpleboost_add_sublib function")
+	# 	message(
+	#		FATAL_ERROR
+	#		"Not enough arguments passed to simpleboost_add_sublib function")
 	# endif()
 
 	set(sublibName "${ARGV0}")
@@ -78,7 +80,7 @@ FUNCTION(simpleboost_add_sublib)
 
 	if (NOT DEFINED SIMPLEBOOST_SUBLIB_${sublibName}_GIT_TAG)
 		if (NOT DEFINED SIMPLEBOOST_DEFAULT_VERSION_TAG)
-			message(FATAL "The default version tag is not defined for boost sub-libraries")
+			message(FATAL_ERROR "The default version tag is not defined for boost sub-libraries")
 		endif()
 
 		set(SIMPLEBOOST_SUBLIB_${sublibName}_GIT_TAG
