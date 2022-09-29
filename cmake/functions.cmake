@@ -22,9 +22,20 @@ FUNCTION(simpleboost_msg_err msg)
 ENDFUNCTION()
 
 
+FUNCTION(simpleboost_include_ver_file ver_file)
+	if(EXISTS ${ver_file})
+		include(${ver_file})
+	else()
+		simpleboost_msg_err("Version file ${ver_file} not found!")
+	endif()
+ENDFUNCTION()
+
+
 FUNCTION(simpleboost_add_sublib)
 	# if (${ARGC} LESS 31)
-	# 	message(FATAL "Not enough arguments passed to simpleboost_add_sublib function")
+	# 	message(
+	#		FATAL_ERROR
+	#		"Not enough arguments passed to simpleboost_add_sublib function")
 	# endif()
 
 	set(sublibName "${ARGV0}")
@@ -76,17 +87,24 @@ FUNCTION(simpleboost_add_sublib)
 		"The dependencies of ${sublibName} sub-library"
 		FORCE)
 
-	if (NOT DEFINED SIMPLEBOOST_SUBLIB_${sublibName}_GIT_TAG)
+	if (NOT DEFINED SIMPLEBOOST_SUBLIB_${sublibName}_VERSION_TAG)
 		if (NOT DEFINED SIMPLEBOOST_DEFAULT_VERSION_TAG)
-			message(FATAL "The default version tag is not defined for boost sub-libraries")
+			message(
+				FATAL_ERROR
+				"The default version tag is not defined for boost sub-libraries"
+			)
 		endif()
 
-		set(SIMPLEBOOST_SUBLIB_${sublibName}_GIT_TAG
-			${SIMPLEBOOST_DEFAULT_VERSION_TAG}
-			CACHE STRING
-			"The git tag of the version selected for ${sublibName} sub-library"
-			FORCE)
+		set(_sublib_ver_tag ${SIMPLEBOOST_DEFAULT_VERSION_TAG})
+	else()
+		set(_sublib_ver_tag ${SIMPLEBOOST_SUBLIB_${sublibName}_VERSION_TAG})
 	endif()
+
+	set(SIMPLEBOOST_SUBLIB_${sublibName}_GIT_TAG
+		${_sublib_ver_tag}
+		CACHE STRING
+		"The git tag of the version selected for ${sublibName} sub-library"
+		FORCE)
 
 ENDFUNCTION()
 
@@ -109,7 +127,9 @@ FUNCTION(simpleboost_enable_sublib sublibName)
 	endforeach()
 
 	# 4. fetch and enable the library
-	simpleboost_msg_status("Enabling sub-library named ${sublibName}")
+	set(_ver_num ${SIMPLEBOOST_SUBLIB_${sublibName}_GIT_TAG})
+	simpleboost_msg_status(
+		"Enabling sub-library named ${sublibName} - version ${_ver_num}")
 
 	FetchContent_Declare(
 		git_boost_${sublibName}
