@@ -31,6 +31,39 @@ FUNCTION(simpleboost_include_ver_file ver_file)
 ENDFUNCTION()
 
 
+FUNCTION(simpleboost_sublib_depend_override)
+
+	set(sublibName "${ARGV0}")
+
+	set(options "")
+	set(oneValueArgs "")
+	set(multiValueArgs DEPENDS DEPENDS_WIN32)
+
+	cmake_parse_arguments(
+		PARSE_ARGV 1
+		_sublib_meta_override
+		"${options}"
+		"${oneValueArgs}"
+		"${multiValueArgs}"
+	)
+
+	if (WIN32)
+		set(_sublib_meta_override_DEPENDS
+			${_sublib_meta_override_DEPENDS}
+			${_sublib_meta_override_DEPENDS_WIN32}
+		)
+	endif()
+
+	set(SIMPLEBOOST_SUBLIB_${sublibName}_DEPENDS_OVERRIDE
+		${_sublib_meta_override_DEPENDS}
+		CACHE STRING
+		"Overrides the dependencies of ${sublibName} sub-library"
+		FORCE
+	)
+
+ENDFUNCTION()
+
+
 FUNCTION(simpleboost_add_sublib)
 	# if (${ARGC} LESS 31)
 	# 	message(
@@ -75,17 +108,26 @@ FUNCTION(simpleboost_add_sublib)
 		"The git address (SSH) to ${sublibName} sub-library"
 		FORCE)
 
-	if (WIN32)
-		set(_sublib_meta_DEPENDS
-			${_sublib_meta_DEPENDS}
-			${_sublib_meta_DEPENDS_WIN32})
-	endif()
+	# dependencies
+	if (DEFINED SIMPLEBOOST_SUBLIB_${sublibName}_DEPENDS_OVERRIDE)
+		set(SIMPLEBOOST_SUBLIB_${sublibName}_DEPENDS
+			${SIMPLEBOOST_SUBLIB_${sublibName}_DEPENDS_OVERRIDE}
+			CACHE STRING
+			"The dependencies of ${sublibName} sub-library"
+			FORCE)
+	else()
+		if (WIN32)
+			set(_sublib_meta_DEPENDS
+				${_sublib_meta_DEPENDS}
+				${_sublib_meta_DEPENDS_WIN32})
+		endif()
 
-	set(SIMPLEBOOST_SUBLIB_${sublibName}_DEPENDS
-		${_sublib_meta_DEPENDS}
-		CACHE STRING
-		"The dependencies of ${sublibName} sub-library"
-		FORCE)
+		set(SIMPLEBOOST_SUBLIB_${sublibName}_DEPENDS
+			${_sublib_meta_DEPENDS}
+			CACHE STRING
+			"The dependencies of ${sublibName} sub-library"
+			FORCE)
+	endif()
 
 	if (NOT DEFINED SIMPLEBOOST_SUBLIB_${sublibName}_VERSION_TAG)
 		if (NOT DEFINED SIMPLEBOOST_DEFAULT_VERSION_TAG)
